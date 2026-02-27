@@ -3,6 +3,7 @@ from datetime import datetime
 
 from airflow.decorators import dag, task , task_group
 from airflow.models import Variable
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.operators.python import get_current_context
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
@@ -172,8 +173,17 @@ def retail_bronze_to_bigquery():
     sales_output = generate_orders_and_items(products_gcs_uri, users_gcs_uri)
 
     # 4. Load generated fact data to BigQuery
-    load_orders_to_bq(sales_output["orders_gcs_uri"])
-    load_order_items_to_bq(sales_output["order_items_gcs_uri"])
+    load_orders_task=  load_orders_to_bq(sales_output["orders_gcs_uri"])
+    load_order_items_task= load_order_items_to_bq(sales_output["order_items_gcs_uri"])
 
+    # 5. Run dbt
+    trigger_dbt_project = TriggerDagRunOperator(
+        task_id='trigger_dbt_retail_pipeline',
+        trigger_dag_id='retail_dbt_medallion',
+        wait_for_completion=False,
+    )
+
+    load_orders_task >> trigger_dbt_project
+    load_order_items_task >> trigger_dbt_project
 
 retail_bronze_to_bigquery()

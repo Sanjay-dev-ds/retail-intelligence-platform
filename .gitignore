@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pytest_cache/
+.venv/
+venv/
+env/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Airflow / Astro
+logs/
+airflow_logs/
+airflow.db
+unittests.db
+.astro/
+
+# dbt
+dags/dbt_retail/target/
+dags/dbt_retail/dbt_packages/
+dags/dbt_retail/logs/
+
+# Virtualenv created inside dbt project
+dags/dbt_retail/venv/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Secrets / env
+.env
+*.env
+*.key.json
+*.pem
+
+# Generated data
+output/
+
+.git
+.env
+.DS_Store
+airflow_settings.yaml
+__pycache__/
+astro
+.venv
+airflow-webserver.pid
+webserver_config.py
+airflow.cfg
+airflow.db

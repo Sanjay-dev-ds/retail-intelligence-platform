@@ -1,0 +1,42 @@
+version: 2
+
+tests:
+  - name: gold_fact_customer_referential_integrity
+    test: relationships
+    args:
+      model: ref("fct_sales")
+      to: ref("dim_customers")
+      field: user_id
+      to_field: user_id
+
+  - name: gold_fact_product_referential_integrity
+    test: relationships
+    args:
+      model: ref("fct_sales")
+      to: ref("dim_products")
+      field: product_id
+      to_field: product_id
+
+  - name: gold_fact_date_referential_integrity
+    test: relationships
+    args:
+      model: ref("fct_sales")
+      to: ref("dim_date")
+      field: date(order_date)
+      to_field: date_day
+
+  - name: gold_agg_daily_from_fact
+    test: relationships
+    args:
+      model: ref("agg_daily_sales")
+      to: ref("fct_sales")
+      field: sale_date
+      to_field: date(order_date)
+
+  - name: gold_agg_category_from_fact
+    test: relationships
+    args:
+      model: ref("agg_sales_by_category")
+      to: ref("fct_sales")
+      field: sale_date
+      to_field: date(order_date)

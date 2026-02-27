@@ -1,0 +1,32 @@
+name: "dbt_retail"
+version: "1.0.0"
+config-version: 2
+
+profile: "retail_bigquery"
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+snapshot-paths: ["snapshots"]
+test-paths: ["tests"]
+
+# Hooks: log start/end (example of dbt hooks)
+on-run-start:
+  - "{{ log('dbt_retail run starting', info=True) }}"
+on-run-end:
+  - "{{ log('dbt_retail run complete', info=True) }}"
+
+models:
+  dbt_retail:
+    +materialized: view
+    bronze:
+      +schema: retail_bronze
+      +tags: ["bronze"]
+    silver:
+      +schema: retail_silver
+      +tags: ["silver"]
+    gold:
+      +schema: retail_gold
+      +tags: ["gold"]
+      # fct_sales and agg_* are incremental (delta-only for orders/order_items)
+      +materialized: view
+

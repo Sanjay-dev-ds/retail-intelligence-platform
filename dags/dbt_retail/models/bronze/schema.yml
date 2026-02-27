@@ -1,0 +1,57 @@
+version: 2
+
+sources:
+  - name: retail_bronze
+    database: project-4d474cb9-a1a5-457f-80b
+    schema: retail_bronze
+    # Optional: fail if data is stale (e.g. no new rows in 24h)
+    # freshness:
+    #   warn_after: { count: 24, period: hour }
+    #   error_after: { count: 48, period: hour }
+    # loaded_at_field: ingestion_ts  # uncomment if all tables have this column
+
+    tables:
+      - name: orders
+        description: "Raw orders ingested from synthetic_sales_generator into the bronze layer."
+        columns:
+          - name: order_id
+            description: "Business key for an order."
+            tests:
+              - not_null
+              - unique
+
+      - name: order_items
+        description: "Raw order line items generated from products and users."
+        columns:
+          - name: order_item_id
+            description: "Surrogate key for a single order line."
+            tests:
+              - not_null
+              - unique
+          - name: order_id
+            description: "Foreign key to the parent order."
+            tests:
+              - not_null
+          - name: product_id
+            description: "Foreign key to the purchased product."
+            tests:
+              - not_null
+
+      - name: users
+        description: "Raw user entities from DummyJSON."
+        columns:
+          - name: id
+            description: "Primary key for the user."
+            tests:
+              - not_null
+              - unique
+
+      - name: products
+        description: "Raw product catalog from DummyJSON."
+        columns:
+          - name: id
+            description: "Primary key for the product."
+            tests:
+              - not_null
+              - unique
+

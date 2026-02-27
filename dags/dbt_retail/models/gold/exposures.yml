@@ -1,0 +1,22 @@
+version: 2
+
+exposures:
+  - name: retail_daily_kpis
+    type: dashboard
+    description: "Daily sales KPIs (orders, items, revenue USD)."
+    owner:
+      name: analytics
+      email: analytics@retail.com
+    depends_on:
+      - ref('agg_daily_sales')
+    url: "/dashboards/retail-daily"
+
+  - name: retail_category_performance
+    type: dashboard
+    description: "Sales by product category by day."
+    owner:
+      name: analytics
+      email: analytics@retail.com
+    depends_on:
+      - ref('agg_sales_by_category')
+    url: "/dashboards/retail-category"

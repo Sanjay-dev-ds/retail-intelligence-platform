@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: "Silver-level cleaned orders with basic typing and auditing."
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+      - name: user_id
+        tests:
+          - not_null
+
+  - name: stg_order_items
+    description: "Silver-level cleaned order items."
+    columns:
+      - name: order_item_id
+        tests:
+          - not_null
+          - unique
+      - name: order_id
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+
+  - name: stg_users
+    description: "Silver-level user dimension."
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+          - unique
+      - name: email
+        tests:
+          - not_null
+
+  - name: stg_products
+    description: "Silver-level product dimension."
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+      - name: category
+        tests:
+          - not_null
+

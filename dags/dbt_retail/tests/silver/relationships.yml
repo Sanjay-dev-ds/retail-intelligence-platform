@@ -1,0 +1,26 @@
+version: 2
+
+tests:
+  - name: silver_order_items_referential_integrity
+    test: relationships
+    args:
+      model: ref("stg_order_items")
+      to: ref("stg_orders")
+      field: order_id
+      to_field: order_id
+
+  - name: silver_order_items_product_referential_integrity
+    test: relationships
+    args:
+      model: ref("stg_order_items")
+      to: ref("stg_products")
+      field: product_id
+      to_field: product_id
+
+  - name: silver_orders_user_referential_integrity
+    test: relationships
+    args:
+      model: ref("stg_orders")
+      to: ref("stg_users")
+      field: user_id
+      to_field: user_id

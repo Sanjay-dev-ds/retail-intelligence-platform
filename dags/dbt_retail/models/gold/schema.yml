@@ -1,0 +1,84 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: "Gold dimension of customers. One row per user with surrogate key."
+    columns:
+      - name: customer_key
+        description: "Surrogate key (hash of user_id)."
+        tests: [not_null, unique]
+      - name: user_id
+        description: "Natural key from source."
+        tests: [not_null, unique]
+
+  - name: dim_products
+    description: "Gold dimension of products. One row per product with surrogate key."
+    columns:
+      - name: product_key
+        description: "Surrogate key (hash of product_id)."
+        tests: [not_null, unique]
+      - name: product_id
+        description: "Natural key from source."
+        tests: [not_null, unique]
+
+  - name: dim_date
+    description: "Date dimension built from order dates. Used for time-based reporting."
+    columns:
+      - name: date_day
+        description: "Calendar date."
+        tests: [not_null, unique]
+
+  - name: fct_sales
+    description: "Fact table at order-line grain (incremental). Only new orders/order_items (delta) are merged each run; allocation uses full order totals."
+    columns:
+      - name: order_item_id
+        description: "Unique order line identifier."
+        tests: [not_null, unique]
+      - name: order_id
+        tests: [not_null]
+      - name: user_id
+        description: "Foreign key to dim_customers (user_id)."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: user_id
+      - name: product_id
+        description: "Foreign key to dim_products (product_id)."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: product_id
+      - name: order_status
+        description: "Order status (e.g. completed, returned)."
+        tests:
+          - accepted_values:
+              values: ['completed', 'returned']
+      - name: final_price_usd
+        description: "Line amount in USD (allocated from order total)."
+      - name: ingestion_ts
+        description: "When the row was ingested into bronze; used for incremental (delta) processing."
+
+  - name: agg_daily_sales
+    description: "Pre-aggregated daily sales metrics. One row per calendar day."
+    columns:
+      - name: sale_date
+        tests: [not_null, unique]
+      - name: total_orders
+        description: "Count of distinct orders."
+      - name: total_items
+        description: "Sum of line quantities."
+      - name: total_amount_usd
+        description: "Sum of sales in USD."
+
+  - name: agg_sales_by_category
+    description: "Pre-aggregated sales by day and product category."
+    columns:
+      - name: sale_date
+        tests: [not_null]
+      - name: category
+        tests: [not_null]
+      - name: total_orders
+      - name: total_items
+      - name: total_amount_usd

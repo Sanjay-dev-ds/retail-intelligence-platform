@@ -4,11 +4,11 @@ models:
   - name: dim_customers
     description: "Gold dimension of customers. One row per user with surrogate key."
     columns:
-      - name: customer_key
-        description: "Surrogate key (hash of user_id)."
-        tests: [not_null, unique]
       - name: user_id
         description: "Natural key from source."
+        tests: [not_null]
+      - name: customer_key
+        description: "Surrogate key (hash of user_id)."
         tests: [not_null, unique]
 
   - name: dim_products
